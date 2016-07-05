@@ -5,26 +5,28 @@ torch.manualSeed(0)
 
 local batch_size = 10
 local n_classes = 5
+local fh = 3
+local fw = 4
 
 local model = objrcg.LogSoftMax():cuda()
-local preinput = torch.rand(batch_size, n_classes)
+local preinput = torch.rand(batch_size, n_classes, fh, fw)
 local input = model:forward(preinput:cuda()):float()
 print(input:size())
 --print(input)
 
-local target = torch.zeros(batch_size):random(1, n_classes)
+local target = torch.zeros(batch_size, fh, fw):random(1, n_classes)
 print(target:size())
 --print(target)
 
 local mask = target:clone():fill(1)
 print(mask:size())
 
-local criterion1 = nn.ClassNLLCriterion():cuda()
+local criterion1 = nn.SpatialClassNLLCriterion():cuda()
 local loss1 = criterion1:forward(input:cuda(), target:cuda())
 local gradInput1 = criterion1:backward(input:cuda(), target:cuda()):float()
 print(loss1)
  
-local criterion2 = objrcg.MaskedClassNLLCriterion(torch.ones(n_classes):cuda()):cuda()
+local criterion2 = objrcg.MaskedSpatialClassNLLCriterion():cuda()
 local loss2a = criterion2:forward(input:cuda(), target:cuda())
 local gradInput2a = criterion2:backward(input:cuda(), target:cuda()):float()
 print(loss2a)

@@ -39,7 +39,8 @@ __global__ void cunn_MaskedSpatialClassNLLCriterion_updateOutput_kernel(
     m = mask ? mask[toffset + i] : 1.0f;
     assert(t >= 0 && t < n_classes);
     cur_weight = weights ? weights[t] : 1.0f;
-    input_sum -= m * input[ioffset + i + map_nelem * t] * cur_weight;
+    cur_weight = cur_weight * m;
+    input_sum -= input[ioffset + i + map_nelem * t] * cur_weight;
     acc_weight += cur_weight;
   }
 

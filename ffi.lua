@@ -28,6 +28,25 @@ void THNN_CudaLogSoftMax_updateGradInput(
           THCudaTensor *gradInput,
           THCudaTensor *output);
 
+void THNN_CudaMaskedClassNLLCriterion_updateOutput(
+          THCState *state,
+          THCudaTensor *input,
+          THCudaTensor *target,
+          THCudaTensor *mask,
+          THCudaTensor *output,
+          bool sizeAverage,
+          THCudaTensor *weights,
+          THCudaTensor *total_weight);
+void THNN_CudaMaskedClassNLLCriterion_updateGradInput(
+          THCState *state,
+          THCudaTensor *input,
+          THCudaTensor *target,
+          THCudaTensor *mask,
+          THCudaTensor *gradInput,
+          bool sizeAverage,
+          THCudaTensor *weights,
+          THCudaTensor *total_weight);
+
 void THNN_CudaMaskedSpatialClassNLLCriterion_updateOutput(
           THCState *state,
           THCudaTensor *input,
