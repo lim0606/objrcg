@@ -5,12 +5,14 @@ torch.manualSeed(0)
 
 local batch_size = 100
 local n_classes = 5
+local fh = 23
+local fw = 34
 
-local input = torch.rand(batch_size, n_classes)
+local input = torch.rand(batch_size, n_classes, fh, fw)
 print(input:size())
 --print(input)
 
-local target = torch.zeros(batch_size):random(1, n_classes)
+local target = torch.zeros(batch_size, fh, fw):random(1, n_classes)
 print(target:size())
 --print(target)
 
@@ -19,12 +21,12 @@ print(mask:size())
 --print(mask)
 
 local lsm = objrcg.LogSoftMax():cuda()
-local criterion1 = objrcg.MaskedClassNLLCriterion():cuda()
+local criterion1 = objrcg.MaskedSpatialClassNLLCriterion():cuda()
 local output = lsm:forward(input:cuda())
 local loss1 = criterion1:forward(output, target:cuda(), mask:cuda())
 print(loss1)
  
-local criterion2 = objrcg.MaskedCrossEntropyCriterion():cuda()
+local criterion2 = objrcg.MaskedSpatialCrossEntropyCriterion():cuda()
 local loss2 = criterion2:forward(input:cuda(), target:cuda(), mask:cuda())
 print(loss2)
 
