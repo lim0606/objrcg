@@ -24,7 +24,7 @@ local loss1 = criterion1:forward(input:cuda(), target:cuda())
 local gradInput1 = criterion1:backward(input:cuda(), target:cuda()):float()
 print(loss1)
  
-local criterion2 = objrcg.MaskedClassNLLCriterion(torch.ones(n_classes):cuda()):cuda()
+local criterion2 = objrcg.MaskedClassNLLCriterion():cuda()
 local loss2a = criterion2:forward(input:cuda(), target:cuda())
 local gradInput2a = criterion2:backward(input:cuda(), target:cuda()):float()
 print(loss2a)
