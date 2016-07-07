@@ -5,8 +5,9 @@ local function optionalTensor(t)
    return t and t:cdata() or nil
 end
 
-function MaskedSmoothL1Criterion:__init(sizeAverage)
+function MaskedSmoothL1Criterion:__init(sigma, sizeAverage)
    parent.__init(self)
+   self.sigma = sigma or 1 
    if sizeAverage ~= nil then
      self.sizeAverage = sizeAverage
    else
@@ -33,7 +34,8 @@ function MaskedSmoothL1Criterion:updateOutput(input, target, mask)
         target:cdata(),
         optionalTensor(mask),
         self.output_tensor:cdata(),
-        self.sizeAverage
+        self.sizeAverage, 
+        self.sigma
      )
    --else
    --  C.THNN_MaskedSmoothL1Criterion_updateOutput(
@@ -57,7 +59,8 @@ function MaskedSmoothL1Criterion:updateGradInput(input, target, mask)
         target:cdata(),
         optionalTensor(mask),
         self.gradInput:cdata(),
-        self.sizeAverage
+        self.sizeAverage,
+        self.sigma
      )
    --else 
    --  C.THNN_MaskedSmoothL1Criterion_updateGradInput(

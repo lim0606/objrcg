@@ -72,14 +72,16 @@ void THNN_CudaMaskedSmoothL1Criterion_updateOutput(
           THCudaTensor *target,
           THCudaTensor *mask,
           THCudaTensor *output,
-          bool sizeAverage);
+          bool sizeAverage, 
+          float sigma);
 void THNN_CudaMaskedSmoothL1Criterion_updateGradInput(
           THCState *state,
           THCudaTensor *input,
           THCudaTensor *target,
           THCudaTensor *mask,
           THCudaTensor *gradInput,
-          bool sizeAverage);
+          bool sizeAverage, 
+          float sigma);
 ]]
 
 return ffi.load(libpath)
