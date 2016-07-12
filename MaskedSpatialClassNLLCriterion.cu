@@ -37,11 +37,13 @@ __global__ void cunn_MaskedSpatialClassNLLCriterion_updateOutput_kernel(
        i += step) {
     t = target[toffset + i] - 1;
     m = mask ? mask[toffset + i] : 1.0f;
-    assert(t >= 0 && t < n_classes);
-    cur_weight = weights ? weights[t] : 1.0f;
-    cur_weight = cur_weight * m;
-    input_sum -= input[ioffset + i + map_nelem * t] * cur_weight;
-    acc_weight += cur_weight;
+    //assert(t >= 0 && t < n_classes);
+    if (t >= 0 && t < n_classes) { 
+      cur_weight = weights ? weights[t] : 1.0f;
+      cur_weight = cur_weight * m;
+      input_sum -= input[ioffset + i + map_nelem * t] * cur_weight;
+      acc_weight += cur_weight;
+    }
   }
 
   __syncthreads();
@@ -86,8 +88,10 @@ __global__ void cunn_MaskedSpatialClassNLLCriterion_updateGradInput_kernel(
        i += step) {
     t = (int)target[toffset + i] - 1;
     m = mask ? mask[toffset + i] : 1.0f;
-    assert(t >= 0 && t < n_classes);
-    gradInput[ioffset + i + map_nelem * t] = -(weights ? weights[t] : 1.0f) * norm * m;
+    //assert(t >= 0 && t < n_classes);
+    if (t >= 0 && t < n_classes) {
+      gradInput[ioffset + i + map_nelem * t] = -(weights ? weights[t] : 1.0f) * norm * m;
+    }
   }
 }
 

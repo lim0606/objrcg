@@ -22,13 +22,15 @@ __global__ void cunn_MaskedClassNLLCriterion_updateOutput_kernel1(float *output,
 
   int t = (int)*target - 1;
   float m = mask ? (float)*mask : 1.0f;
-  assert(t >= 0 && t < n_classes);
-  float cur_weight = weights ? weights[t] : 1.0f; 
-  cur_weight = cur_weight * m;
-  *output = -cur_weight * input[t];
-  *total_weight = cur_weight;
-  if (size_average && *total_weight > 0) {
-    *output /= *total_weight;
+  //assert(t >= 0 && t < n_classes);
+  if (t >= 0 && t < n_classes) {
+    float cur_weight = weights ? weights[t] : 1.0f; 
+    cur_weight = cur_weight * m;
+    *output = -cur_weight * input[t];
+    *total_weight = cur_weight;
+    if (size_average && *total_weight > 0) {
+      *output /= *total_weight;
+    } 
   }
 }
 
@@ -52,11 +54,13 @@ __global__ void cunn_MaskedClassNLLCriterion_updateOutput_kernel(float *output,
   for (i = threadIdx.x; i < nframe; i += NTHREADS) {
       t = target[i] - 1;
       m = mask ? mask[i] : 1.0f;
-      assert(t >= 0 && t < n_classes);
-      cur_weight = weights ? weights[t] : 1.0f;
-      cur_weight = cur_weight * m;
-      shInputs[threadIdx.x] -= input[i * ndim + t] * cur_weight;
-      acc_weight[threadIdx.x] += cur_weight;
+      //assert(t >= 0 && t < n_classes);
+      if (t >= 0 && t < n_classes) {
+        cur_weight = weights ? weights[t] : 1.0f;
+        cur_weight = cur_weight * m;
+        shInputs[threadIdx.x] -= input[i * ndim + t] * cur_weight;
+        acc_weight[threadIdx.x] += cur_weight;
+      }
   }
   __syncthreads();
 
@@ -90,8 +94,10 @@ __global__ void cunn_MaskedClassNLLCriterion_updateGradInput_kernel1(
   float norm = size_average ? (1.0f / *total_weight) : 1.0f;
   int t = (int)*target - 1;
   float m = mask ? (float)*mask : 1.0f;
-  assert(t >= 0 && t < n_classes);
-  gradInput[t] = -(weights ? weights[t] : 1.0f) * norm * m;
+  //assert(t >= 0 && t < n_classes);
+  if (t >= 0 && t < n_classes) {
+    gradInput[t] = -(weights ? weights[t] : 1.0f) * norm * m;
+  }
 }
 
 __global__ void cunn_MaskedClassNLLCriterion_updateGradInput_kernel(
@@ -115,8 +121,10 @@ __global__ void cunn_MaskedClassNLLCriterion_updateGradInput_kernel(
   for (i = threadIdx.x; i < nframe; i += NTHREADS) {
     t = (int)target[i] - 1;
     m = mask ? (float)mask[i] : 1.0f;
-    assert(t >= 0 && t < n_classes);
-    gradInput[i * ndim + t] = -(weights ? weights[t] : 1.0f) * norm * m;
+    //assert(t >= 0 && t < n_classes);
+    if (t >= 0 && t < n_classes) {
+      gradInput[i * ndim + t] = -(weights ? weights[t] : 1.0f) * norm * m;
+    }
   }
 }
 
