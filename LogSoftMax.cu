@@ -4,7 +4,7 @@
 #include "common.h"
 
 #define MINUS_LOG_THRESHOLD -18.42
-#define SOFTMAX_THREADS 128
+#define SOFTMAX_THREADS 256
 
 __global__ void cunn_LogSoftMax_updateOutput_kernel(
   float *output, float *input, int nframe, int dim, int stride)

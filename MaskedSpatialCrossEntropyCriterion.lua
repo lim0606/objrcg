@@ -2,7 +2,8 @@ local MaskedSpatialCrossEntropyCriterion, Criterion = torch.class('objrcg.Masked
 
 function MaskedSpatialCrossEntropyCriterion:__init(weights)
    Criterion.__init(self)
-   self.lsm = objrcg.LogSoftMax()
+   --self.lsm = objrcg.LogSoftMax()
+   self.lsm = nn.LogSoftMax()
    self.nll = objrcg.MaskedSpatialClassNLLCriterion(weights)
 end
 
@@ -37,8 +38,8 @@ function MaskedSpatialCrossEntropyCriterion:updateGradInput(input, target, mask)
      self.lsm:cuda()
      self.nll:cuda()
    end
-   self.nll:updateGradInput(self.lsm.output, target)
-   self.lsm:updateGradInput(input, self.nll.gradInput, mask)
+   self.nll:updateGradInput(self.lsm.output, target, mask)
+   self.lsm:updateGradInput(input, self.nll.gradInput)
    self.gradInput:view(self.lsm.gradInput, size)
    return self.gradInput
 end
