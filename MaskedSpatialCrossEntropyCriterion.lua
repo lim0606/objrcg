@@ -2,8 +2,8 @@ local MaskedSpatialCrossEntropyCriterion, Criterion = torch.class('objrcg.Masked
 
 function MaskedSpatialCrossEntropyCriterion:__init(weights)
    Criterion.__init(self)
-   --self.lsm = objrcg.LogSoftMax()
-   self.lsm = nn.LogSoftMax()
+   self.lsm = objrcg.LogSoftMax()
+   --self.lsm = nn.LogSoftMax()
    self.nll = objrcg.MaskedSpatialClassNLLCriterion(weights)
 end
 
